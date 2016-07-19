@@ -13,7 +13,7 @@ require './point'
 class Tetrimino
     # Constructor of the Tetrimino
     def initialize(blocks)
-        @anchorPosition = Point.new(0, 0)
+        @anchorPosition = Point.new
         @blocks = blocks
         @cache = blocks
         @dirty = false
@@ -25,6 +25,14 @@ class Tetrimino
         @angle.first
     end
 
+    def position
+        @anchorPosition
+    end
+
+    def position=(val)
+        @anchorPosition = val
+    end
+    
     # Returns if the cache is considered dirty or not (true / false).
     def dirty?
         @dirty
@@ -33,6 +41,11 @@ class Tetrimino
     # Returns the length (x-axis) of the Tetrimino.
     def length
         @blocks[0].size
+    end
+
+    # Alias for length
+    def width
+        length
     end
 
     # Returns the height (y-axis) of the Tetrimino.
