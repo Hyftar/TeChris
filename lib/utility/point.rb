@@ -9,12 +9,12 @@ class Point
         @y = y
     end
 
-    # Acessor of the X coordinate
+    # Accessor of the X coordinate
     def x
         @x
     end
 
-    # Acessor of the Y coordinate
+    # Accessor of the Y coordinate
     def y
         @y
     end
