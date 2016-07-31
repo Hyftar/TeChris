@@ -24,12 +24,14 @@ class Board
     end
 
     def swap_piece
-        if not reserve_used and @reserve
-            @currentTetrimino, @reserve = @reserve, @currentTetrimino
+        if not @reserve_used
+            @reserve_used = true
             @currentTetrimino.position = Point.new # TODO: Spawn Tetrimino in the middle of the playing area
-        elsif not reserve_used
-            @currentTetrimino, @reserve = get_next_piece(), @currentTetrimino
-            @currentTetrimino.position = Point.new
+            if @reserve
+                @currentTetrimino, @reserve = @reserve, @currentTetrimino
+            else
+                @currentTetrimino, @reserve = get_next_piece(), @currentTetrimino
+            end
         end
     end
 
