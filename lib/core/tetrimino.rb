@@ -1,4 +1,5 @@
-require './point'
+require './utility/point'
+require './color'
 
 # Represents a Tetrimino object or, a piece in Tetris.
 # Params:
@@ -12,17 +13,26 @@ require './point'
 # ██
 class Tetrimino
     # Constructor of the Tetrimino
-    def initialize(blocks)
+    def initialize(blocks, color)
         @anchorPosition = Point.new
         @blocks = blocks
         @cache = blocks
         @dirty = false
         @angle = [:TOP, :LEFT, :BOTTOM, :RIGHT]
+        @color = color
     end
 
     # Returns the angle of the Tetrimino.
     def angle
         @angle.first
+    end
+
+    def color
+        @color
+    end
+
+    def color=(val)
+        @color = val
     end
 
     def position
@@ -32,7 +42,7 @@ class Tetrimino
     def position=(val)
         @anchorPosition = val
     end
-    
+
     # Returns if the cache is considered dirty or not (true / false).
     def dirty?
         @dirty
