@@ -89,9 +89,8 @@ class Tetrimino
     def x_points
         blocks = self.array
         points = [[],[]]
-
-        (0...blocks.size).each { |y|
-            (0...blocks[0].size).each { |x|
+        (0...height).each { |y|
+            (0...width).each { |x|
                 if blocks[y][x] == 1 && (x - 1 < 0 || blocks[y][x - 1] == 0)
                     points[0] << Point.new(x - 1, y)
                 end
@@ -110,8 +109,8 @@ class Tetrimino
     def y_points
         blocks = array
         points = []
-        (0...blocks[0].size).each{ |x|
-            (0...blocks.size).reverse_each{ |y|
+        (0...width).each{ |x|
+            (0...height).reverse_each{ |y|
                 if blocks[y][x] == 1 && (y + 1 >= height || blocks[y + 1][x] == 0)
                     points << Point.new(x, y + 1)
                 end
