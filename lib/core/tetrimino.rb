@@ -122,14 +122,16 @@ class Tetrimino
 
     # Rotates the Tetrimino clockwise.
     def rotate_cw
-        @angle.rotate!(-1)
-        @dirty = true
-        return self
+        rotate(-1)
     end
 
     # Rotates the Tetrimino counter clockwise.
     def rotate_ccw
-        @angle.rotate!(1)
+        rotate(1)
+    end
+
+    def rotate(val = 1)
+        @angle.rotate!(val)
         @dirty = true
         return self
     end
@@ -137,5 +139,10 @@ class Tetrimino
     # Converts the Tetrimino to a string.
     def to_s
         return self.array.map{|x| x.map {|y| y == 1 ? '█' : ' '}.join }.join("\n")
+    end
+
+    def to_blocks(board)
+        (0...height).each{ |y| (0...width).each{ |x| board.add_block(x, y, @color) if array[y][x] == 1 } }
+        return self
     end
 end
