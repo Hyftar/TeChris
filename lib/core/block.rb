@@ -12,4 +12,8 @@ class Block
     def color
         @color
     end
+
+    def color=(val)
+        @color = val
+    end
 end
