@@ -1,7 +1,10 @@
 require './tetrimino'
+require './block'
+require './player'
 
 class Board
-    def initialize(width, height, nextpieces, *tetriminos)
+    def initialize(player, width, height, nextpieces, *tetriminos)
+        @player = player
         @width = width
         @height = height
         @nextPieces = Array.new(nextpieces) # nextpieces is an int (number of next pieces)
@@ -24,6 +27,30 @@ class Board
         if not reserve_used and @reserve
             @currentTetrimino, @reserve = @reserve, @currentTetrimino
             @currentTetrimino.position = Point.new # TODO: Spawn Tetrimino in the middle of the playing area
+        elsif not reserve_used
+            @currentTetrimino, @reserve = get_next_piece(), @currentTetrimino
+            @currentTetrimino.position = Point.new
         end
+    end
+
+    def check_lines
+        total = 0
+        (0...@height).each{ |y| total += clear_line(y) ? 1 : 0 }
+        if total > 0
+            @player.increment_score total
+        end
+    end
+
+    def clear_line(y)
+        if @playArea[y].all? { |x| x.is_a?( Block ) }
+            @playArea[0..y] = @playArea[0..y].rotate.drop(1).unshift( Array.new(@width) )
+            return true
+        end
+
+        return false
+    end
+
+    def add_block(x, y, color)
+        @playArea[y][x] = Block.new(x, y, color)
     end
 end
