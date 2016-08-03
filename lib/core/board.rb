@@ -55,4 +55,13 @@ class Board
     def add_block(x, y, color)
         @playArea[y][x] = Block.new(x, y, color)
     end
+
+    # TODO: Rewrite this method
+    def to_s
+        tempPA = play_area.map(&:clone) # This is not optimal, but this is one of the most simple aproach.
+        @currentTetrimino.block_points.each { |pt| tempPA[pt.y][pt.x] = Block.new(@currentTetrimino.color, pt) }
+        (('*' * (@width + 2)) + "\n") +
+        tempPA.map{ |y| '*' + y.map { |x| x.is_a?( Block ) ? '█' : ' ' }.join + '*'}.join("\n") +
+        ("\n" + ('*' * (@width + 2)))
+    end
 end

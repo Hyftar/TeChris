@@ -141,8 +141,14 @@ class Tetrimino
         return self.array.map{|x| x.map {|y| y == 1 ? '█' : ' '}.join }.join("\n")
     end
 
+    def block_points
+        points = []
+        (0...height).each { |y| (0...width).each { |x| points << Point.new(x, y) + @anchorPosition if array[y][x] == 1 } }
+        return points
+    end
+
     def to_blocks(board)
-        (0...height).each{ |y| (0...width).each{ |x| board.add_block(x, y, @color) if array[y][x] == 1 } }
+        (0...height).each{ |y| (0...width).each{ |x| board.add_block((@anchorPosition + x).x, (@anchorPosition + y).y, @color) if array[y][x] == 1 } }
         return self
     end
 end
