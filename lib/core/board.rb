@@ -12,8 +12,24 @@ class Board
         @currentTetrimino = nil
         @reserve = nil
         @reserve_used = false
-        @rng_bag = Array.new(@tetriminos.size)
+        @rng_bag = []
         @playArea = Array.new(height) { Array.new(width) }
+    end
+
+    def current_tetrimino
+        @currentTetrimino
+    end
+
+    def current_tetrimino=(value)
+        @currentTetrimino = value
+    end
+
+    def tetriminos
+        @tetriminos
+    end
+
+    def play_area
+        @playArea
     end
 
     def get_next_piece
@@ -35,6 +51,12 @@ class Board
         end
     end
 
+    def check_collisions(tetrimino)
+        if tetrimino.y_points.any? { |pt| @board[pt.y][pt.x] }
+            tetrimino.to_blocks(self)
+        end
+    end
+
     def check_lines
         total = 0
         (0...@height).each{ |y| total += clear_line(y) ? 1 : 0 }
@@ -50,6 +72,10 @@ class Board
         end
 
         return false
+    end
+
+    def reset_reserve
+        @reserve_used = false
     end
 
     def add_block(x, y, color)
