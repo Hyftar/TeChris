@@ -1,4 +1,4 @@
-require './tetrimino'
+require './core/tetrimino'
 
 class Game
     def initialize(settings)

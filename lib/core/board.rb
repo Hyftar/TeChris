@@ -1,6 +1,6 @@
-require './tetrimino'
-require './block'
-require './player'
+require './core/tetrimino'
+require './core/block'
+require './core/player'
 
 class Board
     def initialize(player, width, height, nextpieces, *tetriminos)

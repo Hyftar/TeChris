@@ -1,5 +1,5 @@
 require './utility/point'
-require './color'
+require './core/color'
 
 # Represents a Tetrimino object or, a piece in Tetris.
 # Params:

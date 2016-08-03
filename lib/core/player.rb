@@ -1,4 +1,4 @@
-require './tetrimino'
+require './core/tetrimino'
 
 class Player
     def initialize(game)
