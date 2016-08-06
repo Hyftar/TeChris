@@ -16,6 +16,14 @@ class Board
     @playArea = Array.new(height) { Array.new(width) }
   end
 
+  def width
+      @width
+  end
+
+  def height
+      @height
+  end
+
   def current_tetrimino
     @currentTetrimino
   end
