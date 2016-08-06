@@ -1,6 +1,6 @@
 require './utility/point'
 require './core/color'
-
+require './core/block'
 # Represents a Tetrimino object or, a piece in Tetris.
 # Params:
 # Blocks: a 2-Dimensions array of 1 (blocks) and 0 (empty space)
@@ -50,7 +50,7 @@ class Tetrimino
 
     # Returns the length (x-axis) of the Tetrimino.
     def length
-        @blocks[0].size
+        array[0].size
     end
 
     # Alias for length
@@ -60,7 +60,7 @@ class Tetrimino
 
     # Returns the height (y-axis) of the Tetrimino.
     def height
-        @blocks.size
+        array.size
     end
 
     # Returns an array containing the definition of the Tetrimino.
@@ -92,11 +92,11 @@ class Tetrimino
         (0...height).each { |y|
             (0...width).each { |x|
                 if blocks[y][x] == 1 && (x - 1 < 0 || blocks[y][x - 1] == 0)
-                    points[0] << Point.new(x - 1, y)
+                    points[0] << Point.new(x - 1, y) + @anchorPosition
                 end
 
                 if blocks[y][x] == 1 && (x + 1 >= length || blocks[y][x + 1] == 0)
-                    points[1] << Point.new(x + 1, y)
+                    points[1] << Point.new(x + 1, y) + @anchorPosition
                 end
             }
         }
@@ -112,7 +112,7 @@ class Tetrimino
         (0...width).each{ |x|
             (0...height).reverse_each{ |y|
                 if blocks[y][x] == 1 && (y + 1 >= height || blocks[y + 1][x] == 0)
-                    points << Point.new(x, y + 1)
+                    points << Point.new(x, y + 1) + @anchorPosition
                 end
             }
         }
@@ -121,18 +121,22 @@ class Tetrimino
     end
 
     # Rotates the Tetrimino clockwise.
-    def rotate_cw
-        rotate(-1)
+    def rotate_cw(board)
+        rotate(board, -1)
     end
 
     # Rotates the Tetrimino counter clockwise.
-    def rotate_ccw
-        rotate(1)
+    def rotate_ccw(board)
+        rotate(board, 1)
     end
 
-    def rotate(val = 1)
+    def rotate(board, val)
         @angle.rotate!(val)
         @dirty = true
+        if (0...height).any? { |y| (0...width).any? { |x| pt = (Point.new(x, y) + @anchorPosition); pt.x >= board.width || pt.y >= board.height || board[pt.y][pt.x].is_a?( Block ) } }
+            @angle.rotate!(val * -1)
+            @dirty = true
+        end
         return self
     end
 
