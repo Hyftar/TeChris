@@ -1,6 +1,7 @@
 require './core/tetrimino'
 require './core/block'
 require './core/player'
+require './utility/point'
 
 class Board
   def initialize(player, width, height, nextpieces, *tetriminos)
@@ -85,7 +86,7 @@ class Board
   end
 
   def add_block(x, y, color)
-    @playArea[y][x] = Block.new(x, y, color)
+    @playArea[y][x] = Block.new(color, Point.new(x, y))
   end
 
   # TODO: Rewrite this method
