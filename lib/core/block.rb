@@ -1,8 +1,7 @@
 class Block
-  def initialize(color, position, effect = nil)
+  def initialize(color, position)
     @color = color
     @position = position
-    @effect = effect
   end
 
   def position
