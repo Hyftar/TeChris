@@ -41,6 +41,10 @@ class Board
     @playArea
   end
 
+  def [](y)
+    @playArea[y]
+  end
+
   def get_next_piece
     @rng_bag = @tetriminos.sample(@tetriminos.size) if @rng_bad.empty?
     return @rng_bag.shift
