@@ -1,7 +1,7 @@
 require './core/tetrimino'
 
 class Game
-    def initialize(settings)
-        @players = []
-    end
+  def initialize(settings)
+    @players = []
+  end
 end
