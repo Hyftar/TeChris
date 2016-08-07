@@ -1,5 +1,7 @@
 # Represents a Point object, a 2D x-y coordinate.
 class Point
+  attr_accessor :x, :y
+  
   # Constructor of a Point.
   # Params:
   # x: The coordinate on the X-axis.
@@ -7,24 +9,6 @@ class Point
   def initialize(x = 0, y = 0)
     @x = x
     @y = y
-  end
-
-  # Accessor of the X coordinate
-  def x
-    @x
-  end
-
-  # Accessor of the Y coordinate
-  def y
-    @y
-  end
-
-  def x=(val)
-    @x = val
-  end
-
-  def y=(val)
-    @y = val
   end
 
   def +(val)

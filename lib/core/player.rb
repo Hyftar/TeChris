@@ -25,7 +25,7 @@ class Player
 
   # Increments the score of the player relative to the number of lines he just cleared and his current combo
   def increment_score(lines)
-    unless lines == 0
+    unless lines.zero?
       @combo += 1
       @lines_cleared += lines
       @score += 100 * 2**(lines - 1) * combo

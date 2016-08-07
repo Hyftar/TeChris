@@ -6,5 +6,5 @@ module Color
   LIME = 5
   PURPLE = 6
   RED = 7
-  GREY  = 8
+  GREY = 8
 end

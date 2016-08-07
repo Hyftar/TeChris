@@ -4,7 +4,6 @@ require './core/player'
 require './utility/point'
 
 class Board
-
   attr_reader :width, :height, :tetriminos, :array
 
   attr_accessor :current_tetrimino
@@ -15,7 +14,7 @@ class Board
     @height = height
     @nextPieces = Array.new(nextpieces) # nextpieces is an int (number of next pieces)
     @tetriminos = tetriminos
-    @currentTetrimino = nil
+    @current_tetrimino = nil
     @reserve = nil
     @reserve_used = false
     @rng_bag = []
@@ -32,13 +31,14 @@ class Board
   end
 
   def swap_piece
-    if not @reserve_used
+    unless @reserve_used
       @reserve_used = true
-      @currentTetrimino.position = Point.new # TODO: Spawn Tetrimino in the middle of the playing area
+      @current_tetrimino.position = Point.new # TODO: Spawn Tetrimino in the middle of the playing area
       if @reserve
-        @currentTetrimino, @reserve = @reserve, @currentTetrimino
+        @current_tetrimino, @reserve = @reserve, @current_tetrimino
       else
-        @currentTetrimino, @reserve = get_next_piece(), @currentTetrimino
+        @reserve = @current_tetrimino
+        @current_tetrimino = get_next_piece
       end
     end
   end
@@ -52,9 +52,7 @@ class Board
   def check_lines
     total = 0
     (0...@height).each { |y| total += clear_line(y) ? 1 : 0 }
-    if total > 0
-      @player.increment_score total
-    end
+    @player.increment_score(total) unless total.zero?
   end
 
   def clear_line(y)
@@ -76,10 +74,10 @@ class Board
 
   # TODO: Rewrite this method
   def to_s
-    tempPA = play_area.map(&:clone) # This is not optimal, but this is one of the most simple aproach.
-    @currentTetrimino.block_points.each { |pt| tempPA[pt.y][pt.x] = Block.new(@currentTetrimino.color, pt) }
+    temp_array = array.map(&:clone) # This is not optimal, but this is one of the most simple aproach.
+    @current_tetrimino.block_points.each { |pt| temp_array[pt.y][pt.x] = Block.new(@current_tetrimino.color, pt) }
     (('*' * (@width + 2)) + "\n") +
-    tempPA.map{ |y| '*' + y.map { |x| x.is_a?(Block) ? '█' : ' ' }.join + '*'}.join("\n") +
-    ("\n" + ('*' * (@width + 2)))
+      temp_array.map { |y| '*' + y.map { |x| x.is_a?(Block) ? '█' : ' ' }.join + '*'}.join("\n") +
+      ("\n" + ('*' * (@width + 2)))
   end
 end

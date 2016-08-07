@@ -1,5 +1,4 @@
 class Block
-
   attr_reader :position
 
   attr_accessor :color
