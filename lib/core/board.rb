@@ -4,6 +4,11 @@ require './core/player'
 require './utility/point'
 
 class Board
+
+  attr_reader :width, :height, :tetriminos, :array
+
+  attr_accessor :current_tetrimino
+
   def initialize(player, width, height, nextpieces, *tetriminos)
     @player = player
     @width = width
@@ -14,39 +19,15 @@ class Board
     @reserve = nil
     @reserve_used = false
     @rng_bag = []
-    @playArea = Array.new(height) { Array.new(width) }
-  end
-
-  def width
-      @width
-  end
-
-  def height
-      @height
-  end
-
-  def current_tetrimino
-    @currentTetrimino
-  end
-
-  def current_tetrimino=(value)
-    @currentTetrimino = value
-  end
-
-  def tetriminos
-    @tetriminos
-  end
-
-  def play_area
-    @playArea
+    @array = Array.new(height) { Array.new(width) }
   end
 
   def [](y)
-    @playArea[y]
+    @array[y]
   end
 
   def get_next_piece
-    @rng_bag = @tetriminos.sample(@tetriminos.size) if @rng_bad.empty?
+    @rng_bag = @tetriminos.sample(@tetriminos.size) if @rng_bag.empty?
     return @rng_bag.shift
   end
 
@@ -77,8 +58,8 @@ class Board
   end
 
   def clear_line(y)
-    if @playArea[y].all? { |x| x.is_a?(Block) }
-      @playArea[0..y] = @playArea[0..y].rotate.drop(1).unshift(Array.new(@width))
+    if @array[y].all? { |x| x.is_a?(Block) }
+      @array[0..y] = @array[0..y].rotate.drop(1).unshift(Array.new(@width))
       return true
     end
 
@@ -90,7 +71,7 @@ class Board
   end
 
   def add_block(x, y, color)
-    @playArea[y][x] = Block.new(color, Point.new(x, y))
+    @array[y][x] = Block.new(color, Point.new(x, y))
   end
 
   # TODO: Rewrite this method
