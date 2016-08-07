@@ -12,88 +12,57 @@ require './core/block'
 #  ██
 # ██
 class Tetrimino
+
+  attr_accessor :color, :position
+
   # Constructor of the Tetrimino
   def initialize(blocks, color)
-    @anchorPosition = Point.new
+    @position = Point.new
     @blocks = blocks
-    @cache = blocks
-    @dirty = false
-    @angle = [:TOP, :LEFT, :BOTTOM, :RIGHT]
     @color = color
-  end
-
-  # Returns the angle of the Tetrimino.
-  def angle
-    @angle.first
-  end
-
-  def color
-    @color
-  end
-
-  def color=(val)
-    @color = val
-  end
-
-  def position
-    @anchorPosition
-  end
-
-  def position=(val)
-    @anchorPosition = val
-  end
-
-  # Returns if the cache is considered dirty or not (true / false).
-  def dirty?
-    @dirty
+    @angles =
+      [@blocks,
+       @blocks.transpose.reverse,
+       @blocks.reverse.map(&:reverse),
+       @blocks.transpose.map(&:reverse)]
   end
 
   # Returns the length (x-axis) of the Tetrimino.
   def length
-    array[0].size
+    array.first.size
   end
 
-  # Alias for length
-  def width
-    length
-  end
+  alias width length
 
   # Returns the height (y-axis) of the Tetrimino.
   def height
     array.size
   end
 
+  alias size height
+
   # Returns an array containing the definition of the Tetrimino.
-  # Positions containing 1 are solid cubes while the ones containing 0
-  # are empty cubes.
+  # Positions containing 1 are solid blocks while the ones containing 0
+  # are empty blocks.
   def array
-    if dirty?
-      @dirty = false
-      @cache =
-        case angle
-        when :TOP then @blocks
-        when :LEFT then @blocks.transpose.reverse
-        when :BOTTOM then @blocks.reverse.map(&:reverse)
-        when :RIGHT then @blocks.transpose.map(&:reverse)
-        end
-    end
-    return @cache
+    @angles.first
   end
+
+  alias blocks array
 
   # Returns 2 list of points that should be checked while handling x-axis collisions.
   # The first list contains the points on the left of the Tetrimino, while the
   # second contains the points on the right of the Tetrimino.
   def x_points
-    blocks = self.array
     points = [[],[]]
     (0...height).each { |y|
       (0...width).each { |x|
-        if blocks[y][x] == 1 && (x - 1 < 0 || blocks[y][x - 1] == 0)
-          points[0] << Point.new(x - 1, y) + @anchorPosition
+        if array[y][x] == 1 && (x - 1 < 0 || array[y][x - 1] == 0)
+          points[0] << Point.new(x - 1, y) + @position
         end
 
-        if blocks[y][x] == 1 && (x + 1 >= length || blocks[y][x + 1] == 0)
-          points[1] << Point.new(x + 1, y) + @anchorPosition
+        if array[y][x] == 1 && (x + 1 >= length || array[y][x + 1] == 0)
+          points[1] << Point.new(x + 1, y) + @position
         end
       }
     }
@@ -104,12 +73,11 @@ class Tetrimino
   # Returns a list of points that should be checked while handling y-axis collisions.
   # These positions are only the ones bellow the Tetrimino since the Tetrimino can only fall.
   def y_points
-    blocks = array
     points = []
     (0...width).each { |x|
       (0...height).reverse_each { |y|
-        if blocks[y][x] == 1 && (y + 1 >= height || blocks[y + 1][x] == 0)
-          points << Point.new(x, y + 1) + @anchorPosition
+        if array[y][x] == 1 && (y + 1 >= height || array[y + 1][x] == 0)
+          points << Point.new(x, y + 1) + @position
         end
       }
     }
@@ -128,11 +96,9 @@ class Tetrimino
   end
 
   def rotate(board, val)
-    @angle.rotate!(val)
-    @dirty = true
-    if (0...height).any? { |y| (0...width).any? { |x| pt = (Point.new(x, y) + @anchorPosition); pt.x >= board.width || pt.y >= board.height || board[pt.y][pt.x].is_a?( Block ) } }
-      @angle.rotate!(val * -1)
-      @dirty = true
+    @angles.rotate!(val)
+    if (0...height).any? { |y| (0...width).any? { |x| pt = (Point.new(x, y) + @position); pt.x >= board.width || pt.y >= board.height || board[pt.y][pt.x].is_a?(Block) } }
+      @angles.rotate!(val * -1)
     end
     return self
   end
@@ -144,12 +110,12 @@ class Tetrimino
 
   def block_points
     points = []
-    (0...height).each { |y| (0...width).each { |x| points << Point.new(x, y) + @anchorPosition if array[y][x] == 1 } }
+    (0...height).each { |y| (0...width).each { |x| points << Point.new(x, y) + @position if array[y][x] == 1 } }
     return points
   end
 
   def to_blocks(board)
-    (0...height).each{ |y| (0...width).each{ |x| board.add_block((@anchorPosition + x).x, (@anchorPosition + y).y, @color) if array[y][x] == 1 } }
+    (0...height).each{ |y| (0...width).each{ |x| board.add_block((@position + x).x, (@position + y).y, @color) if array[y][x] == 1 } }
     return self
   end
 end
