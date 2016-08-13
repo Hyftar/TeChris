@@ -15,15 +15,13 @@ class Tetrimino
   attr_accessor :color, :position
 
   # Constructor of the Tetrimino
-  def initialize(blocks, color)
+  def initialize(blocks)
     @position = Point.new
-    @blocks = blocks
-    @color = color
     @angles =
-      [@blocks,
-       @blocks.transpose.reverse,
-       @blocks.reverse.map(&:reverse),
-       @blocks.transpose.map(&:reverse)]
+      [blocks,
+       blocks.transpose.reverse,
+       blocks.reverse.map(&:reverse),
+       blocks.transpose.map(&:reverse)]
   end
 
   # Returns the length (x-axis) of the Tetrimino.
@@ -56,11 +54,11 @@ class Tetrimino
     points = [[], []]
     (0...height).each do |y|
       (0...width).each do |x|
-        if array[y][x] == 1 && (x - 1 < 0 || (array[y][x - 1]).zero?)
+        if array[y][x] != 0 && (x - 1 < 0 || (array[y][x - 1]).zero?)
           points[0] << Point.new(x - 1, y) + @position
         end
 
-        if array[y][x] == 1 && (x + 1 >= length || (array[y][x + 1]).zero?)
+        if array[y][x] != 0 && (x + 1 >= length || (array[y][x + 1]).zero?)
           points[1] << Point.new(x + 1, y) + @position
         end
       end
@@ -75,7 +73,7 @@ class Tetrimino
     points = []
     (0...width).each do |x|
       (0...height).reverse_each do |y|
-        if array[y][x] == 1 && (y + 1 >= height || (array[y + 1][x]).zero?)
+        if array[y][x] != 0 && (y + 1 >= height || (array[y + 1][x]).zero?)
           points << Point.new(x, y + 1) + @position
         end
       end
@@ -94,6 +92,7 @@ class Tetrimino
     rotate(board, 1)
   end
 
+  # TODO: Most likely not thread-safe
   def rotate(board, val)
     @angles.rotate!(val)
     if (0...height).any? { |y| (0...width).any? { |x| pt = (Point.new(x, y) + @position); pt.x >= board.width || pt.y >= board.height || board[pt.y][pt.x].is_a?(Block) } }
@@ -104,17 +103,18 @@ class Tetrimino
 
   # Converts the Tetrimino to a string.
   def to_s
-    return array.map {|x| x.map {|y| y == 1 ? '█' : ' '}.join }.join("\n")
+    return array.map { |x| x.map { |y| y.zero? ? ' ' : '█' }.join }.join("\n")
   end
 
   def block_points
     points = []
-    (0...height).each { |y| (0...width).each { |x| points << Point.new(x, y) + @position if array[y][x] == 1 } }
+    (0...height).each { |y| (0...width).each { |x| points << Point.new(x, y) + @position if array[y][x] != 0 } }
     return points
   end
 
   def to_blocks(board)
-    (0...height).each{ |y| (0...width).each{ |x| board.add_block((@position + x).x, (@position + y).y, @color) if array[y][x] == 1 } }
+    (0...height).each{ |y| (0...width).each{ |x| board.add_block((@position + x).x, (@position + y).y, @color) if array[y][x] != 0 } }
+    @position = Point.new
     return self
   end
 end
