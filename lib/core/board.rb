@@ -43,9 +43,12 @@ class Board
     end
   end
 
-  def check_collisions(tetrimino)
-    if tetrimino.y_points.any? { |pt| @board[pt.y][pt.x] }
-      tetrimino.to_blocks(self)
+  def check_collisions
+    if @current_tetrimino.y_points.any? { |pt| pt.y >= @height || @array[pt.y][pt.x].is_a?(Block) }
+      @current_tetrimino.to_blocks(self)
+      @current_tetrimino = get_next_piece
+    elsif @current_tetrimino
+      @current_tetrimino.position.y += 1
     end
   end
 

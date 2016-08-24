@@ -1,7 +1,6 @@
 require './core/tetrimino'
 
 class Player
-
   attr_reader :score, :board, :combo, :lines_cleared
 
   def initialize(game)
@@ -12,13 +11,13 @@ class Player
 
     # TODO: Move the tetriminos definitions from here.
 
-    i = Tetrimino.new([[1, 1, 1, 1]], Color::CYAN)
-    o = Tetrimino.new([[1, 1], [1, 1]], Color::YELLOW)
-    t = Tetrimino.new([[0, 1, 0], [1, 1, 1]], Color::PURPLE)
-    s = Tetrimino.new([[0, 1, 1], [1, 1, 0]], Color::LIME)
-    z = Tetrimino.new([[1, 1, 0], [0, 1, 1]], Color::RED)
-    j = Tetrimino.new([[1, 0, 0], [1, 1, 1]], Color::BLUE)
-    l = Tetrimino.new([[0, 0, 1], [1, 1, 1]], Color::ORANGE)
+    i = Tetrimino.new([[1, 1, 1, 1]])
+    o = Tetrimino.new([[1, 1], [1, 1]])
+    t = Tetrimino.new([[0, 1, 0], [1, 1, 1]])
+    s = Tetrimino.new([[0, 1, 1], [1, 1, 0]])
+    z = Tetrimino.new([[1, 1, 0], [0, 1, 1]])
+    j = Tetrimino.new([[1, 0, 0], [1, 1, 1]])
+    l = Tetrimino.new([[0, 0, 1], [1, 1, 1]])
 
     @board = Board.new(self, 10, 22, 5, i, o, t, s, z, j, l)
   end

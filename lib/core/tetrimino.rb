@@ -1,6 +1,8 @@
 require './utility/point'
 require './core/color'
 require './core/block'
+require './utility/logger'
+
 # Represents a Tetrimino object or, a piece in Tetris.
 # Params:
 # Blocks: a 2-Dimensions array of 1 (blocks) and 0 (empty space)
@@ -12,16 +14,16 @@ require './core/block'
 #  ██
 # ██
 class Tetrimino
-  attr_accessor :color, :position
+  attr_accessor :position
 
   # Constructor of the Tetrimino
   def initialize(blocks)
     @position = Point.new
     @angles =
-      [blocks,
-       blocks.transpose.reverse,
-       blocks.reverse.map(&:reverse),
-       blocks.transpose.map(&:reverse)]
+      [blocks.freeze,
+       blocks.transpose.reverse.freeze,
+       blocks.reverse.map(&:reverse).freeze,
+       blocks.transpose.map(&:reverse).freeze]
   end
 
   # Returns the length (x-axis) of the Tetrimino.
@@ -47,9 +49,9 @@ class Tetrimino
 
   alias blocks array
 
-  # Returns 2 list of points that should be checked while handling x-axis collisions.
-  # The first list contains the points on the left of the Tetrimino, while the
-  # second contains the points on the right of the Tetrimino.
+  # Returns 2 list of points that should be checked while handling x-axis
+  # collisions. The first list contains the points on the left of the Tetrimino,
+  # while the second contains the points on the right of the Tetrimino.
   def x_points
     points = [[], []]
     (0...height).each do |y|
@@ -67,8 +69,9 @@ class Tetrimino
     return points
   end
 
-  # Returns a list of points that should be checked while handling y-axis collisions.
-  # These positions are only the ones bellow the Tetrimino since the Tetrimino can only fall.
+  # Returns a list of points that should be checked while handling y-axis
+  # collisions. These positions are only the ones bellow the Tetrimino since
+  # the Tetrimino can only fall.
   def y_points
     points = []
     (0...width).each do |x|
@@ -92,28 +95,54 @@ class Tetrimino
     rotate(board, 1)
   end
 
-  # TODO: Most likely not thread-safe
-  def rotate(board, val)
-    @angles.rotate!(val)
-    if (0...height).any? { |y| (0...width).any? { |x| pt = (Point.new(x, y) + @position); pt.x >= board.width || pt.y >= board.height || board[pt.y][pt.x].is_a?(Block) } }
-      @angles.rotate!(val * -1)
+  def fits_at?(board, blockArray, pos)
+    not (0...blockArray.size).any? do |y|
+      (0...blocksArray.first.size).any? do |x|
+        pt = (pos + Point.new(x, y))
+        pt.x >= board.width ||
+        pt.y >= board.height ||
+        board[pt.y][pt.x].is_a?(Block)
+      end
     end
+  end
+
+  def rotate(board, val)
+    @angles.rotate!(val) if fits_at?(board, @angles[val], @position)
     return self
   end
 
   # Converts the Tetrimino to a string.
   def to_s
-    return array.map { |x| x.map { |y| y.zero? ? ' ' : '█' }.join }.join("\n")
+    array.map { |x| x.map { |y| y.zero? ? ' ' : '█' }.join }.join("\n")
+  end
+
+  def get_ghost_pos(board)
+    ghost_pos = Point.new(@position.x, board.height)
+    until fits_at?(board, array, ghost_pos)
+      ghost_pos.y -= 1
+    end
+    return ghost_pos
   end
 
   def block_points
     points = []
-    (0...height).each { |y| (0...width).each { |x| points << Point.new(x, y) + @position if array[y][x] != 0 } }
+    (0...height).each do |y|
+      (0...width).each do |x|
+        points << Point.new(x, y) + @position unless array[y][x].zero?
+      end
+    end
     return points
   end
 
   def to_blocks(board)
-    (0...height).each{ |y| (0...width).each{ |x| board.add_block((@position + x).x, (@position + y).y, @color) if array[y][x] != 0 } }
+    Logger.instance.log('Turning Tetrimino to blocks.')
+    (0...height).each do |y|
+      (0...width).each do |x|
+        if array[y][x] != 0
+          board.add_block((@position + x).x, (@position + y).y, @color)
+        end
+      end
+    end
     @position = Point.new
     return self
   end

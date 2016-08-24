@@ -7,7 +7,7 @@
 ### TO DO LIST
 (In no particular order)
 - [ ] Game Logic
-    - [ ] Collisions
+    - [x] Collisions
     - [ ] Game ticks
     - [ ] User input
     - [ ] Pieces Ghosts
