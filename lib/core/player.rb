@@ -1,7 +1,6 @@
 require './core/tetrimino'
 
 class Player
-
   attr_reader :score, :board, :combo, :lines_cleared
 
   def initialize(game)

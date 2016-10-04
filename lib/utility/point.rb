@@ -1,7 +1,7 @@
 # Represents a Point object, a 2D x-y coordinate.
 class Point
   attr_accessor :x, :y
-  
+
   # Constructor of a Point.
   # Params:
   # x: The coordinate on the X-axis.
@@ -20,7 +20,7 @@ class Point
       temp.x += val
       temp.y += val
     end
-    return temp
+    temp
   end
 
   def -(val)
@@ -32,28 +32,28 @@ class Point
       temp.x -= val
       temp.y -= val
     end
-    return temp
+    temp
   end
 
   def *(val)
     temp = Point.new(@x, @y)
     temp.x *= val
     temp.y *= val
-    return temp
+    temp
   end
 
   def /(val)
     temp = Point.new(@x, @y)
     temp.x /= val
     temp.y /= val
-    return temp
+    temp
   end
 
   def %(val)
     temp = Point.new(@x, @y)
     temp.x %= val
     temp.y %= val
-    return temp
+    temp
   end
 
   def to_s

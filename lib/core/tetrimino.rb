@@ -54,17 +54,17 @@ class Tetrimino
     points = [[], []]
     (0...height).each do |y|
       (0...width).each do |x|
-        if array[y][x] != 0 && (x - 1 < 0 || (array[y][x - 1]).zero?)
+        if (array[y][x]).nonzero? && (x - 1 < 0 || (array[y][x - 1]).zero?)
           points[0] << Point.new(x - 1, y) + @position
         end
 
-        if array[y][x] != 0 && (x + 1 >= length || (array[y][x + 1]).zero?)
+        if (array[y][x]).nonzero? && (x + 1 >= length || (array[y][x + 1]).zero?)
           points[1] << Point.new(x + 1, y) + @position
         end
       end
     end
 
-    return points
+    points
   end
 
   # Returns a list of points that should be checked while handling y-axis collisions.
@@ -73,13 +73,13 @@ class Tetrimino
     points = []
     (0...width).each do |x|
       (0...height).reverse_each do |y|
-        if array[y][x] != 0 && (y + 1 >= height || (array[y + 1][x]).zero?)
+        if (array[y][x]).nonzero? && (y + 1 >= height || (array[y + 1][x]).zero?)
           points << Point.new(x, y + 1) + @position
         end
       end
     end
 
-    return points
+    points
   end
 
   # Rotates the Tetrimino clockwise.
@@ -98,23 +98,23 @@ class Tetrimino
     if (0...height).any? { |y| (0...width).any? { |x| pt = (Point.new(x, y) + @position); pt.x >= board.width || pt.y >= board.height || board[pt.y][pt.x].is_a?(Block) } }
       @angles.rotate!(val * -1)
     end
-    return self
+    self
   end
 
   # Converts the Tetrimino to a string.
   def to_s
-    return array.map { |x| x.map { |y| y.zero? ? ' ' : '█' }.join }.join("\n")
+    array.map { |x| x.map { |y| y.zero? ? ' ' : '█' }.join }.join("\n")
   end
 
   def block_points
     points = []
-    (0...height).each { |y| (0...width).each { |x| points << Point.new(x, y) + @position if array[y][x] != 0 } }
-    return points
+    (0...height).each { |y| (0...width).each { |x| points << Point.new(x, y) + @position if (array[y][x]).nonzero? } }
+    points
   end
 
   def to_blocks(board)
-    (0...height).each{ |y| (0...width).each{ |x| board.add_block((@position + x).x, (@position + y).y, @color) if array[y][x] != 0 } }
+    (0...height).each { |y| (0...width).each { |x| board.add_block((@position + x).x, (@position + y).y, @color) if (array[y][x]).nonzero? } }
     @position = Point.new
-    return self
+    self
   end
 end

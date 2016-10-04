@@ -27,7 +27,7 @@ class Board
 
   def get_next_piece
     @rng_bag = @tetriminos.sample(@tetriminos.size) if @rng_bag.empty?
-    return @rng_bag.shift
+    @rng_bag.shift
   end
 
   def swap_piece
@@ -61,7 +61,7 @@ class Board
       return true
     end
 
-    return false
+    false
   end
 
   def reset_reserve
@@ -77,7 +77,7 @@ class Board
     temp_array = array.map(&:clone) # This is not optimal, but this is one of the most simple aproach.
     @current_tetrimino.block_points.each { |pt| temp_array[pt.y][pt.x] = Block.new(@current_tetrimino.color, pt) }
     (('*' * (@width + 2)) + "\n") +
-      temp_array.map { |y| '*' + y.map { |x| x.is_a?(Block) ? '█' : ' ' }.join + '*'}.join("\n") +
+      temp_array.map { |y| '*' + y.map { |x| x.is_a?(Block) ? '█' : ' ' }.join + '*' }.join("\n") +
       ("\n" + ('*' * (@width + 2)))
   end
 end
